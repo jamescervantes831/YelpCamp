@@ -26,16 +26,10 @@ app.get('/', (req, res) =>{
     res.render('mock')
 })
 
-
-app.get('/makeCampground', async (req, res) =>{
-    const camp = new Campground({
-        title: 'New Camp',
-        description: 'cheap camping'
-    })
-    await camp.save()
-    res.send(camp)
+app.get('/campground', async (req, res) =>{
+    const campgrounds = await Campground.find({})
+    res.render('campgrounds/index', { campgrounds })
 })
-
 app.listen(3000, () => {
     console.log('serving on port 3000')
 })
