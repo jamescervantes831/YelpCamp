@@ -23,6 +23,7 @@ app.set('views', path.join(__dirname, 'views'))
 app.set('view engine', 'ejs')
 
 app.use(express.urlencoded({ extended: true }))
+app.use(methodOverride('_method'));
 
 app.get('/', async (req, res) =>{
     res.render('home')
@@ -39,18 +40,38 @@ app.get('/campground/:id', async (req, res) => {
     const campground = await Campground.findById(req.params.id);
     res.render('campgrounds/show', { campground })
 })
-app.post('/campground', (req, res) => {
-    const title = req.body.campground.title
-    const location = req.body.campground.location
-    Campground.insertMany({
+app.get('/campground/:id/edit', async (req, res) => {
+    const campground = await Campground.findById(req.params.id);
+    res.render('campgrounds/edit', { campground })
+})
+app.post('/campground', async (req, res) => {
+    const campground = new Campground(req.body.campground);
+    await campground.save();
+    res.redirect(`/campground/${campground._id}`)
+})
+app.put('/campground/:id', async (req, res) => {  
+    const { id } = req.params
+    const campground = await Campground.findByIdAndUpdate(id, { ...req.body.campground });
+    res.redirect(`/campground/${id}`)
+    /** THE BELOW IS A LONGER SCRIPT FOR A ASYNC/AWAIT FUNCTION
+     ** ALSO ALOWS US TO DEBUG WIHT CATCH().
+     ** BUT AN ASYNC IS A PROMISE, & IN SOME CASES ALLOWES
+     ** US TO DO MORE WITH LESS.
+    Campground.findByIdAndUpdate(id, {
         title: title,
         location: location
-    }).then(result =>{
-        res.redirect('/campground')
+    }).then(result => {
+        res.redirect(`/campground/${id}`)
     }).catch(err => {
         console.log(err)
         res.send(err)
     })
+    */
+})
+app.delete('/campground/:id', async (req, res) => {
+    const { id } = req.params;
+    await Campground.findByIdAndDelete(id);
+    res.redirect('/campground')
 })
 app.listen(3000, () => {
     console.log('serving on port 3000')
