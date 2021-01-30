@@ -7,7 +7,7 @@ const mongoose = require('mongoose')
 const ejsMate = require('ejs-mate');
 const catchAsync = require('./utils/catchAsync');
 const ExpressError = require('./utils/ExpressError');
-const Joi = require('joi')
+const campgroundSchema = require('./schema')
 
 mongoose.connect('mongodb://localhost:27017/yelp-camp',{
     useNewUrlParser: true,
@@ -31,15 +31,6 @@ app.use(express.urlencoded({ extended: true }))
 app.use(methodOverride('_method'));
 
 const validateCampground = (req, res, next) =>{
-    const campgroundSchema = Joi.object({
-        campground: Joi.object({
-            title: Joi.string().required(),
-            price: Joi.number().required().min(0),
-            image: Joi.string().required(),
-            location: Joi.string().required(),
-            description: Joi.string().required()
-        }).required()
-    })
     console.log(req.body.campground)
     const { error } = campgroundSchema.validate(req.body)
     if(error) {
