@@ -21,3 +21,30 @@
         </form>
     </div>
 </div>
+<!-- PICK UP FROM HERE 2/8/2021 -->
+<div class="row">
+    <% if(reviews.length){ %> 
+    <div class="col-sm-12 col-md-6">
+    <% } %> 
+        <form action="/campground/<%= campground._id %>/review" method="POST" class="Validate" novalidate>
+            <div class="my-2 py-2">
+                <label class="form-label" for="body">Review</label>
+                <textarea class="form-control" name="review[body]" id="body" cols="30" rows="10" required></textarea>
+                <label for="rating" class="form-label">Example range</label>
+                <input type="range" class="form-range" name="review[rating]" min="0" max="5" step="0.5" id="rating">
+                <button type="submit" class="btn btn-primary">submit</button>
+            </div>
+        </form>
+    <% if(reviews.length){ %> 
+        </div>
+        <div class="col-sm-12 col-md-6">
+            <ul class="list-group">
+                
+                <li class="list-group-item"><%= reviews.body %> <span><%= reviews.rating %></span></li>
+                
+            </ul>
+        </div>
+    <% } %> 
+    </div>
+</div>
+<!-- PICK UP FROM HERE 2/8/2021 -->
