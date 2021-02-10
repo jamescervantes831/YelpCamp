@@ -37,11 +37,17 @@
         </form>
     <% if(reviews.length){ %> 
         </div>
-        <div class="col-sm-12 col-md-6">
+        <div class="col-sm-12 col-md-6 my-2 py-2">
+            <p class="pb-1 mb-1">Submitted Reviews</p>
             <ul class="list-group">
-                
-                <li class="list-group-item"><%= reviews.body %> <span><%= reviews.rating %></span></li>
-                
+                <% for(let review of reviews){ %> 
+                <form action="/campground/<%= campground._id %>/review/<%= review._id %>/?_method=DELETE" method="POST">
+                    <li class="list-group-item">
+                        Review: <%= review.body %><span><strong>|</strong>  Rating: <%= review.rating %></span>
+                        <button type="submit" class="btn btn-outline-danger btn-sm">Delete</button>
+                    </li>
+                </form>
+                <% } %> 
             </ul>
         </div>
     <% } %> 

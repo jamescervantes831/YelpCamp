@@ -64,15 +64,12 @@ app.get('/campground/new', (req, res) => {
     res.render('campgrounds/new');
 })
 
-//PICK UP FROM HERE 2/8/2021
 app.get('/campground/:id', catchAsync( async (req, res) => {
     const campground = await Campground.findById(req.params.id).populate('reviews');
     const reviews = campground.reviews;
-    console.log('this is campground: '+ campground)
-    console.log('this is reviews: '+ reviews)
     res.render('campgrounds/show', { campground, reviews })
 }))
-///////////////////////////////////////////////////
+
 
 app.get('/campground/:id/edit', catchAsync( async (req, res) => {
     const campground = await Campground.findById(req.params.id);
@@ -85,18 +82,14 @@ app.post('/campground', validateCampground , catchAsync(async (req, res, next) =
     res.redirect(`/campground/${campground._id}`)
 }))
 
-//PICK UP FROM HERE 2/8/2021
 app.post('/campground/:id/review', validateReview ,catchAsync(async (req, res, next) =>{
     const campground = await Campground.findById(req.params.id);
     const review = new Review(req.body.review)
     campground.reviews.push(review);
-    console.log(campground)
-    console.log(review)
     await review.save();
     await campground.save();
     res.redirect(`/campground/${campground._id}`)
 }))
-///////////////////////////////////////////////////
 app.put('/campground/:id', validateCampground ,catchAsync(  async (req, res) => {  
     const { id } = req.params
     await Campground.findByIdAndUpdate(id, { ...req.body.campground }, options.new = true);
@@ -120,6 +113,12 @@ app.delete('/campground/:id', catchAsync( async (req, res) => {
     const { id } = req.params;
     await Campground.findByIdAndDelete(id);
     res.redirect('/campground')
+}))
+app.delete('/campground/:campId/review/:reviewId/', catchAsync( async(req, res) => {
+    const { campId, reviewId } = req.params;
+    await Campground.findByIdAndUpdate(campId, {$pull: {reviews: reviewId } } )
+    await Review.findByIdAndDelete(reviewId);
+    res.redirect(`/campground/${campId}`);
 }))
 app.all('*', (req, res, next) => {
     next(new ExpressError('Page Not Found', 404))
