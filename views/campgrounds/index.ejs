@@ -3,13 +3,13 @@
     <a href="/campground/new">Create New Campground</a>
     <div class="row">
         <% for(let campground of campgrounds){ %> 
-            <div class="my-1 col-sm-12 col-md-4">
+            <div class="my-1 col-sm-12 col-md-6 col-lg-4">
                 <div class="card">
                     <img src=" <%= campground.image %> " class="card-img-top">
                     <div class="card-body">
                         <h5 class="card-title"><%= campground.title %></h5>
                         <p class="card-text"><%= campground.description %> </p>
-                        <a href="/campground/<%= campground._id %>" class="btn btn-primary">Learn More</a>
+                        <a href="/campground/<%= campground._id %>" class="btn btn-primary">View <%= campground.title %> </a>
                     </div>
                 </div>
             </div>
