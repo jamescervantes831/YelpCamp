@@ -6,12 +6,17 @@ const path = require('path')
 const session = require('express-session')
 const flash = require('connect-flash')
 /////////////////////////////////////////
+
+const passport = require('passport')
+const LocalStrategy = require('passport-local')
 const mongoose = require('mongoose')
 const ejsMate = require('ejs-mate');
 const ExpressError = require('./utils/ExpressError');
 const campgroundRoutes = require('./routes/campground')
 const reviewRoutes = require('./routes/reviews')
 const usersRoutes = require('./routes/users');
+const User = require('./model/user');
+
 mongoose.connect('mongodb://localhost:27017/yelp-camp',{
     useNewUrlParser: true,
     useCreateIndex: true,
@@ -46,18 +51,27 @@ const sessionConfig ={
 }
 
 app.use(session(sessionConfig))
+
 app.use(flash())
 
+app.use(passport.initialize());
+app.use(passport.session());
+passport.use(new LocalStrategy(User.authenticate()));
+
+passport.serializeUser(User.serializeUser());
+passport.deserializeUser(User.deserializeUser());
+
 app.use((req, res, next) => {
+    console.log(req.session)
+    res.locals.currentUser = req.user;
     res.locals.success = req.flash('success');
     res.locals.error = req.flash('error');
     next();
 })
+
 app.use('/', usersRoutes);
 app.use('/campground', campgroundRoutes);
-app.use('/campground/:id/review', reviewRoutes)
-
-
+app.use('/campground/:id/review', reviewRoutes);
 
 app.get('/', async (req, res) =>{
     res.render('home')
@@ -71,6 +85,7 @@ app.use((err, req, res, next) => {
     if(!err.message) err.message = 'Oh No, Something Went Wrong!'
     res.status(statusCode).render('error', { err })
 })
+
 app.listen(3000, () => {
     console.log('serving on port 3000')
 })
