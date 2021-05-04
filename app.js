@@ -6,13 +6,12 @@ const path = require('path')
 const session = require('express-session')
 const flash = require('connect-flash')
 /////////////////////////////////////////
-
 const mongoose = require('mongoose')
 const ejsMate = require('ejs-mate');
 const ExpressError = require('./utils/ExpressError');
-const campground = require('./routes/campground')
-const review = require('./routes/reviews')
-
+const campgroundRoutes = require('./routes/campground')
+const reviewRoutes = require('./routes/reviews')
+const usersRoutes = require('./routes/users');
 mongoose.connect('mongodb://localhost:27017/yelp-camp',{
     useNewUrlParser: true,
     useCreateIndex: true,
@@ -54,9 +53,9 @@ app.use((req, res, next) => {
     res.locals.error = req.flash('error');
     next();
 })
-
-app.use('/campground', campground);
-app.use('/campground/:id/review', review)
+app.use('/', usersRoutes);
+app.use('/campground', campgroundRoutes);
+app.use('/campground/:id/review', reviewRoutes)
 
 
 
